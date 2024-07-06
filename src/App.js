@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
+  const [spacecraft, setSpacecraft] = useState("");
+  const [result, setResult] = useState(null);
+
+  const handleSearch = () => {
+    fetch("https://isro.vercel.app/api/spacecrafts")
+      .then((response) => response.json())
+      .then((data) => {
+        const found = data.spacecrafts.some(
+          (item) => item.name.toLowerCase() === spacecraft.toLowerCase()
+        );
+        setResult(found ? "Spacecraft found" : "Spacecraft not found");
+      });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Spacecraft Search</h1>
+      <input
+        type="text"
+        value={spacecraft}
+        onChange={(e) => setSpacecraft(e.target.value)}
+        placeholder="Enter spacecraft name"
+      />
+      <button onClick={handleSearch}>Search</button>
+      {result && <p>{result}</p>}
     </div>
   );
 }
